@@ -1,25 +1,50 @@
-import logo from './logo.svg';
-import './App.css';
+import { useEffect,useState } from "react"
+import Loading from "./components/Loading"
+import './App.css'
+import Tours from "./components/Tours"
 
+const url = 'https://course-api.com/react-tours-project'
 function App() {
-  return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
-  );
-}
 
-export default App;
+  const [loading,setLoading]=useState(true)
+  const [tours,setTours]=useState([])
+
+  const removeTour=(id)=>{
+
+    setTours(tours.filter((tour)=>tour.id!==id))
+    
+        
+  }
+  
+  const getData=async ()=>{
+    setLoading(true)
+    try{
+      const data=await fetch(url)
+      const response= await data.json()
+      console.log(response)
+      setTours(response)
+      setLoading(false)
+    }
+    catch(err){
+      console.log(err)
+      setLoading(false)
+    }
+  }
+
+  useEffect(()=>{
+    getData()
+  },[])
+
+  if(loading){
+  return (
+<Loading/>
+  )
+  }
+  else{
+  return(<>
+  
+  <Tours tours={tours} removeTour={removeTour}/>
+  </>)
+  }
+}
+export default App
